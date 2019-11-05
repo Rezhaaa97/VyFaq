@@ -2,7 +2,7 @@
     id: number;
     fornavn: string;
     etternavn: string;
-    adresse: string;
+    epost: string;
     postnr: string;
-    poststed: string;
+    spm: string;
 }

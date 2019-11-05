@@ -23,20 +23,37 @@ var SPA = /** @class */ (function () {
             id: [""],
             fornavn: [null, forms_1.Validators.compose([forms_1.Validators.required, forms_1.Validators.pattern("[a-zA-ZøæåØÆÅ\\-. ]{2,30}")])],
             etternavn: [null, forms_1.Validators.compose([forms_1.Validators.required, forms_1.Validators.pattern("[a-zA-ZøæåØÆÅ\\-. ]{2,30}")])],
-            adresse: [null, forms_1.Validators.compose([forms_1.Validators.required, forms_1.Validators.pattern("[0-9a-zA-ZøæåØÆÅ\\-. ]{2,30}")])],
-            postnr: [null, forms_1.Validators.compose([forms_1.Validators.required, forms_1.Validators.pattern("[0-9]{4}")])],
-            poststed: [null, forms_1.Validators.compose([forms_1.Validators.required, forms_1.Validators.pattern("[a-zA-ZøæåØÆÅ\\-. ]{2,30}")])]
+            epost: [null, forms_1.Validators.compose([forms_1.Validators.required, forms_1.Validators.pattern("[0-9a-zA-ZøæåØÆÅ@_\\-. ]{2,30}")])],
+            spm: [null, forms_1.Validators.compose([forms_1.Validators.required, forms_1.Validators.pattern("[0-9a-zA-ZøæåØÆÅ?.,!\\-. ]{2,300}")])],
         });
     }
     SPA.prototype.ngOnInit = function () {
         this.laster = true;
         this.hentAlleKunder();
+        this.hentAlleSpm();
+        this.visSkjema = false;
+        this.visKundeListe = true;
+        this.visSpml = false;
+    };
+    SPA.prototype.visSporsmal = function () {
+        this.visSpml = true;
+        this.visSkjema = false;
+        this.visKundeListe = false;
+    };
+    SPA.prototype.visForside = function () {
+        this.visSpml = false;
+        this.visSkjema = true;
+        this.visKundeListe = false;
+    };
+    SPA.prototype.visKundeSide = function () {
+        this.visSpml = false;
         this.visSkjema = false;
         this.visKundeListe = true;
     };
+    //Kontaktskjema
     SPA.prototype.hentAlleKunder = function () {
         var _this = this;
-        this._http.get("api/kunde/")
+        this._http.get("api/kunde")
             .map(function (returData) {
             var JsonData = returData.json();
             return JsonData;
@@ -54,29 +71,46 @@ var SPA = /** @class */ (function () {
         }, function (error) { return alert(error); }, function () { return console.log("ferdig get-api/kunde"); });
     };
     ;
+    //FAQ
+    SPA.prototype.hentAlleSpm = function () {
+        var _this = this;
+        this._http.get("api/faqhjelp")
+            .map(function (returData) {
+            var JsonData = returData.json();
+            return JsonData;
+        })
+            .subscribe(function (JsonData) {
+            _this.alleSpml = [];
+            if (JsonData) {
+                for (var _i = 0, JsonData_2 = JsonData; _i < JsonData_2.length; _i++) {
+                    var spmlObjekt = JsonData_2[_i];
+                    _this.alleSpml.push(spmlObjekt);
+                    _this.laster = false;
+                }
+            }
+            ;
+        }, function (error) { return alert(error); }, function () { return console.log("ferdig get-api/Faqhjelp"); });
+    };
+    ;
     SPA.prototype.vedSubmit = function () {
         if (this.skjemaStatus == "Registrere") {
             this.lagreKunde();
-        }
-        else if (this.skjemaStatus == "Endre") {
-            this.endreEnKunde();
         }
         else {
             alert("Feil i applikasjonen!");
         }
     };
     SPA.prototype.registrerKunde = function () {
-        // må resette verdiene i skjema dersom skjema har blitt brukt til endringer
         this.skjema.setValue({
             id: "",
             fornavn: "",
             etternavn: "",
-            adresse: "",
-            postnr: "",
-            poststed: ""
+            epost: "",
+            spm: "",
         });
         this.skjema.markAsPristine();
         this.visKundeListe = false;
+        this.visSpml = false;
         this.skjemaStatus = "Registrere";
         this.visSkjema = true;
     };
@@ -89,9 +123,8 @@ var SPA = /** @class */ (function () {
         var lagretKunde = new Kunde_1.Kunde();
         lagretKunde.fornavn = this.skjema.value.fornavn;
         lagretKunde.etternavn = this.skjema.value.etternavn;
-        lagretKunde.adresse = this.skjema.value.adresse;
-        lagretKunde.postnr = this.skjema.value.postnr;
-        lagretKunde.poststed = this.skjema.value.poststed;
+        lagretKunde.epost = this.skjema.value.epost;
+        lagretKunde.spm = this.skjema.value.spm;
         var body = JSON.stringify(lagretKunde);
         var headers = new http_2.Headers({ "Content-Type": "application/json" });
         this._http.post("api/kunde", body, { headers: headers })
@@ -103,54 +136,6 @@ var SPA = /** @class */ (function () {
         }, function (error) { return alert(error); }, function () { return console.log("ferdig post-api/kunde"); });
     };
     ;
-    SPA.prototype.sletteKunde = function (id) {
-        var _this = this;
-        this._http.delete("api/kunde/" + id)
-            .map(function (returData) { return returData.toString(); })
-            .subscribe(function (retur) {
-            _this.hentAlleKunder();
-        }, function (error) { return alert(error); }, function () { return console.log("ferdig delete-api/kunde"); });
-    };
-    ;
-    // her blir kunden hentet og vist i skjema
-    SPA.prototype.endreKunde = function (id) {
-        var _this = this;
-        this._http.get("api/kunde/" + id)
-            .map(function (returData) {
-            var JsonData = returData.json();
-            return JsonData;
-        })
-            .subscribe(function (JsonData) {
-            _this.skjema.patchValue({ id: JsonData.id });
-            _this.skjema.patchValue({ fornavn: JsonData.fornavn });
-            _this.skjema.patchValue({ etternavn: JsonData.etternavn });
-            _this.skjema.patchValue({ adresse: JsonData.adresse });
-            _this.skjema.patchValue({ postnr: JsonData.postnr });
-            _this.skjema.patchValue({ poststed: JsonData.poststed });
-        }, function (error) { return alert(error); }, function () { return console.log("ferdig get-api/kunde"); });
-        this.skjemaStatus = "Endre";
-        this.visSkjema = true;
-        this.visKundeListe = false;
-    };
-    // her blir den endrede kunden lagret
-    SPA.prototype.endreEnKunde = function () {
-        var _this = this;
-        var endretKunde = new Kunde_1.Kunde();
-        endretKunde.fornavn = this.skjema.value.fornavn;
-        endretKunde.etternavn = this.skjema.value.etternavn;
-        endretKunde.adresse = this.skjema.value.adresse;
-        endretKunde.postnr = this.skjema.value.postnr;
-        endretKunde.poststed = this.skjema.value.poststed;
-        var body = JSON.stringify(endretKunde);
-        var headers = new http_2.Headers({ "Content-Type": "application/json" });
-        this._http.put("api/kunde/" + this.skjema.value.id, body, { headers: headers })
-            .map(function (returData) { return returData.toString(); })
-            .subscribe(function (retur) {
-            _this.hentAlleKunder();
-            _this.visSkjema = false;
-            _this.visKundeListe = true;
-        }, function (error) { return alert(error); }, function () { return console.log("ferdig post-api/kunde"); });
-    };
     SPA = __decorate([
         core_1.Component({
             selector: "min-app",

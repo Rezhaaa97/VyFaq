@@ -1,77 +1,151 @@
-﻿<h1>Kunder SPA Angular Web-API</h1>
-Med Reactive Forms.
+﻿<!--- Navbar --->
 <div>
-    <div class="col-md-6 col-md-offset-1" *ngIf="visKundeListe">
-        <div *ngIf="laster">Laster kunder.....</div>
-        <table class="table table-bordered table-condensed">
-            <thead>
-                <tr>
-                    <th>Fornavn</th>
-                    <th>Etternavn</th>
-                    <th>Adresse</th>
-                    <th>Postnr</th>
-                    <th>Poststed</th>
-                </tr>
-            </thead>
-            <tbody *ngFor="let kunde of alleKunder">
-                <tr>
-                    <td>{{kunde.fornavn}}</td>
-                    <td>{{kunde.etternavn}}</td>
-                    <td>{{kunde.adresse}}</td>
-                    <td>{{kunde.postnr}}</td>
-                    <td>{{kunde.poststed}}</td>
-                    <td><button class="btn btn-danger" (click)="sletteKunde(kunde.id)">Slett</button></td>
-                    <td><button class="btn btn-success" (click) ="endreKunde(kunde.id)">Endre</button></td>
-                </tr>
-            </tbody>
-        </table>
-        <button class='btn btn-primary' (click)='registrerKunde()'>Register kunde</button>
+    <nav class="navbar navbar-light  bg-light">
+
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#"></a>
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+        </div>
+        <ul class="nav nav-pills nav-justified">
+            <li><img src="/app/images/vylogo.png" style="width:70%;" /></li>
+            <li><a (click)="visKundeSide()"><span class="glyphicon glyphicon-home"></span>Hjem</a></li>
+            <li><a (click)="visSporsmal()"><span class="glyphicon glyphicon-eye-open"></span>FAQ</a></li>
+            <li><a (click)="visForside() "><span class="glyphicon glyphicon-earphone"></span>Kontakt oss</a></li>
+            <li><a (click)="visKundeSide()"><span class="glyphicon glyphicon-check"></span>Spørsmål && Svar</a></li>
+        </ul>
+    </nav>
+</div>
+
+<!--- Kontaktskjema --->
+
+<div class="col-md-8 col-md-offset-2" *ngIf="visKundeListe">
+
+    <div *ngIf="laster">Laster Registrerte kunder ...</div>
+
+    <div>
+        Hei
+    </div>
+
+    <div *ngFor="let kunde of alleKunder">
+        <div class='panel-group'>
+            <div class='panel panel-default'>
+                <div id='panel-header' class='panel-heading'>
+
+                    <a data-toggle='collapse' [attr.data-target]="'#' + kunde.id">
+                        <div class='panel-customtitle'>{{kunde.fornavn}} {{kunde.etternavn}} <span style="padding-left: 10px;">({{kunde.epost}})</span></div>
+                    </a>
+                </div>
+                <div id="{{kunde.id}}" class="panel-collapse collapse">
+                    <div class='panel-body'>
+                        <div><b>Spørsmål:</b> {{kunde.spm}} </div>
+                    </div>
+                </div>
+                <div>
+                    <div id='btn-section'>
+                        <button class='btn btn-info active pull-right btn-sm' data-toggle="collapse" [attr.data-target]="'#' + kunde.id">Vis spørsmål</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <button class='btn btn-info active' (click)='registrerKunde()'>Registrer spørsmål</button>
+</div>
+
+<!--- FAQ --->
+<div>
+    <div class="col-md-8 col-md-offset-2" *ngIf="visSpml">
+        <div *ngIf="laster">laster spørsmål</div>
+        <div class="alert alert-info text-center"><h2><strong>Hva kan vi hjelpe deg med?</strong></h2></div>
+        <div class="alert alert-success"><h4>Regelmessig stile spørsmål</h4></div>
+
+        <div *ngFor="let spml of alleSpml">
+            <div class='panel-group'>
+                <div class='panel panel-default'>
+                    <div id='panel-header' class='panel-heading'>
+
+                        <a data-toggle='collapse' [attr.data-target]="'#' + spml.id">
+                            <div class='panel-collapse'>{{spml.id}}</div>
+                            <div class='panel-collapse'>{{spml.spml}}</div>
+                        </a>
+                    </div>
+
+                    <div id="{{spml.id}}" class="panel-collapse collapse">
+                        <div class='panel-body'>
+                            <div>
+                                <b>Svar:</b> {{spml.svar}} <br>
+                                <b>like</b> {{spml.like}}  <b>unlike</b> {{spml.unlike}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id='btn-section'>
+                    <button class='btn btn-success active pull-right btn-sm' data-toggle="collapse" [attr.data-target]="'#' + spml.id">Svar</button>
+                </div>
+
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="col-sm-4 col-sm-offset-2" *ngIf="visSkjema">
+<!--- Skjema --->
+
+<div class="col-sm-4 col-sm-offset-4" *ngIf="visSkjema">
+
+    <h2>Spørsmål?</h2>
+    <p>Fyll ut skjema, og en av våre konsulenter vil henvede seg så fort dem finner tid.</p>
+
     <form [formGroup]="skjema" (ngSubmit)="vedSubmit()">
+
         <input class="form-control" formControlName="id" type="hidden" />
+
         <div class="form-group">
-            <label>Fornavn</label>
+            <label>Fornavn </label>
             <input class="form-control" formControlName="fornavn" />
             <p class="alert alert-warning" [hidden]="skjema.controls.fornavn.valid || (skjema.controls.fornavn.pristine && !submitted)">
-               Fornavn er obligatorisk.
+                Fornavn må oppgis.
             </p>
         </div>
+
         <div class="form-group">
             <label>Etternavn</label>
             <input class="form-control" formControlName="etternavn" />
             <p class="alert alert-warning" [hidden]="skjema.controls.etternavn.valid || (skjema.controls.etternavn.pristine && !submitted)">
-                Etternavn er obligatorisk.
+                Etternavn må oppgis.
             </p>
         </div>
+
         <div class="form-group">
-            <label>Adresse</label>
-            <input class="form-control" formControlName="adresse" />
-            <p class="alert alert-warning" [hidden]="skjema.controls.adresse.valid || (skjema.controls.adresse.pristine && !submitted)">
-                Adresse er obligatorisk.
+            <label>Epost</label>
+            <input class="form-control" formControlName="epost" />
+            <p class="alert alert-warning" [hidden]="skjema.controls.epost.valid || (skjema.controls.epost.pristine && !submitted)">
+                Epost må oppgis.
             </p>
         </div>
+
         <div class="form-group">
-            <label>Postnr</label>
-            <input class="form-control" formControlName="postnr" />
-            <p class="alert alert-warning" [hidden]="skjema.controls.postnr.valid || (skjema.controls.postnr.pristine && !submitted)">
-                Postnr er obligatorisk (4 siffer)
+            <label>Spørsmål</label>
+            <textarea class="form-control" formControlName="spm" rows="5" placeholder="Har du spørsmål?"></textarea>
+            <p class="alert alert-warning" [hidden]="skjema.controls.spm.valid || (skjema.controls.spm.pristine && !submitted)">
+                Spørsmål må oppgis
             </p>
         </div>
-        <div class="form-group">
-            <label>Poststed</label>
-            <input class="form-control" formControlName="poststed" />
-            <p class="alert alert-warning" [hidden]="skjema.controls.poststed.valid || (skjema.controls.poststed.pristine && !submitted)">
-                Poststed er obligatorisk.
-            </p>
-        </div>
+
         <div class="form-group">
             <button type="submit" *ngIf="skjemaStatus=='Endre'" [disabled]="!skjema.valid" class="btn btn-primary">Endre</button>
-            <button type="submit" *ngIf="skjemaStatus=='Registrere'" [disabled]="!skjema.valid"  class="btn btn-primary">Registrer</button>
-            <button class="btn btn-default" (click)="tilbakeTilListe()">Tilbake</button>
+            <button type="submit" *ngIf="skjemaStatus=='Registrere'" [disabled]="!skjema.valid" class="btn btn-success">Send</button>
+            <button class="btn btn-info" (click)="tilbakeTilListe()">Tilbake</button>
         </div>
     </form>
+
 </div>
+
+
+
 

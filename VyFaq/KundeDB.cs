@@ -9,125 +9,104 @@ namespace VyFaq
 {
     public class KundeDB 
     {
-        KundeContext db = new KundeContext();
-        
-        public List<kunde> hentAlleKunder()
-        {
-            List<kunde> alleKunder = db.Kunder.Select(k=> new kunde()
-                                      {
-                                          id = k.id,
-                                          fornavn = k.fornavn,
-                                          etternavn = k.etternavn,
-                                          adresse = k.adresse,
-                                          postnr = k.postnr,
-                                          poststed = k.poststed.poststed
-                                      }).ToList();
-            return alleKunder;
-        }
-        
-        public kunde hentEnKunde(int id)
-        {
-            Kunde enDBKunde = db.Kunder.Find(id); 
+        FaqContext db = new FaqContext();
 
-            var enKunde = new kunde()
-            {
-                id = enDBKunde.id,
-                fornavn = enDBKunde.fornavn,
-                etternavn = enDBKunde.etternavn,
-                adresse = enDBKunde.adresse,
-                postnr = enDBKunde.postnr,
-                poststed = enDBKunde.poststed.poststed
-            };
-            return enKunde;
-        }
-
-        public bool lagreEnKunde(kunde innKunde)
+        public bool registrerKunde(kunde spm)
         {
-            var nyKunde = new Kunde
+            using (var db = new FaqContext())
             {
-                fornavn = innKunde.fornavn,
-                etternavn = innKunde.etternavn,
-                adresse = innKunde.adresse,
-                postnr = innKunde.postnr
-            };
-
-            Poststed funnetPoststed = db.Poststeder.Find(innKunde.postnr);
-            if (funnetPoststed == null)
-            {
-                // lag poststedet
-                var nyttPoststed = new Poststed
+                try
                 {
-                    postnr = innKunde.postnr,
-                    poststed = innKunde.poststed
-                };
-                // legg det inn i den nye kunden
-                nyKunde.poststed = nyttPoststed;
+                    var nyttSpm = new kunde()
+                    {
+                        id = spm.id,
+                        fornavn = spm.fornavn,
+                        etternavn = spm.etternavn,
+                        epost = spm.epost,
+                        spm = spm.spm
+                    };
 
-            }
-            try
-            {
-                // lagre kunden
-                db.Kunder.Add(nyKunde);
-                db.SaveChanges();
-            }
-            catch(Exception feil)
-            {
-                return false;
-            }
-            return true;
-        }
-        public bool endreEnKunde(int id, kunde innKunde)
-        {
-            // finn kunden
-            Kunde funnetKunde = db.Kunder.FirstOrDefault(k => k.id == id);
-            if (funnetKunde == null)
-            {
-                return false;
-            }
-            // legg inn ny verdier i denne fra innKunde
-            funnetKunde.fornavn = innKunde.fornavn;
-            funnetKunde.etternavn = innKunde.etternavn;
-            funnetKunde.adresse = innKunde.adresse;
-            funnetKunde.postnr = innKunde.postnr;
-
-            // finn ut om postnummer finnes fra før
-            Poststed funnetPoststed = db.Poststeder.Find(innKunde.postnr);
-            if(funnetPoststed==null)
-            {
-                // lag poststedet
-                var nyttPoststed = new Poststed
+                    db.Kunder.Add(nyttSpm);
+                    db.SaveChanges();
+                    return true;
+                }
+                catch (Exception e)
                 {
-                    postnr = innKunde.postnr,
-                    poststed = innKunde.poststed
-                };
-                // legg det inn i kunden
-                funnetKunde.poststed = nyttPoststed;
+                    return false;
+                }
             }
-            try
-            {
-                // lagre kunden
-                db.SaveChanges();
-            }
-            catch(Exception feil)
-            {
-                return false;
-            }
-            return true;
         }
-        
-        public bool slettEnKunde(int id)
+
+        public List<kunde> alleSpm()
         {
-            try
+            var db = new FaqContext();
+            var liste = new List<kunde>();
+
+            var allespm = db.Kunder.ToList();
+            foreach (var spm in allespm)
             {
-                Kunde finnKunde = db.Kunder.Find(id);
-                db.Kunder.Remove(finnKunde);
-                db.SaveChanges();
-            }
-            catch(Exception feil)
-            {
-                return false;
-            }
-            return true;
+                kunde k = new kunde
+                {
+                    id = spm.id,
+                    fornavn = spm.fornavn,
+                    etternavn = spm.etternavn,
+                    epost = spm.epost,
+                    spm = spm.spm
+                };
+                liste.Add(k);
+            };
+
+            return liste;
         }
+
+        public bool registrerspørsmål(faqhjelp spml)
+        {
+            using (var db = new FaqContext())
+            {
+                try
+                {
+                    var nyttSpml = new faqhjelp()
+                    {
+                        id = spml.id,
+                        spml = spml.spml,
+                        svar = spml.svar,
+                        like = spml.like,
+                        unlike = spml.unlike
+
+                    };
+
+                    db.Spm.Add(nyttSpml);
+                    db.SaveChanges();
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    return false;
+                }
+            }
+        }
+
+        public List<faqhjelp> AlleSpmOgSvar()
+        {
+            var db = new FaqContext();
+            var liste = new List<faqhjelp>();
+
+            var AlleSpmSvarListe = db.Spm.ToList();
+            foreach (var spmsvar in AlleSpmSvarListe)
+            {
+                faqhjelp k = new faqhjelp
+                {
+                    id = spmsvar.id,
+                    spml = spmsvar.spml,
+                    svar = spmsvar.svar,
+                    like = spmsvar.like,
+                    unlike = spmsvar.unlike
+                };
+                liste.Add(k);
+            };
+
+            return liste;
+        }
+
     }
 }

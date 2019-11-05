@@ -16,37 +16,29 @@ namespace VyFaq.Models
         public int id { get; set; }
         public string fornavn { get; set; }
         public string etternavn { get; set; }
-        public string adresse { get; set; }
-        public string postnr { get; set; }
+        public string epost { get; set; }
+        public string spml { get; set; }
 
-        public virtual Poststed poststed { get; set; }
-    }
+   }
 
-    public class Poststed
+  
+
+    public class FaqContext : DbContext
     {
-        [Key]
-        public string postnr { get; set; }
-        public string poststed { get; set; }
-
-        public virtual List<Kunde> kunder { get; set; }
-    }
-
-    public class KundeContext : DbContext
-    {
-        public KundeContext()
-          : base("name=Kunde")
+        public FaqContext()
+          : base("name=Faq")
         {
-            Database.CreateIfNotExists();
+            Database.SetInitializer(new DBInit());
         }
 
         // konstruktøren under brukes kun under test!
-        public KundeContext(DbConnection connection)
+      /*  public FaqContext(DbConnection connection)
                 : base(connection,true)
         {
-        }
+        }*/
       
-        public DbSet<Kunde> Kunder { get; set; }
-        public DbSet<Poststed> Poststeder { get; set; }
+        public DbSet<kunde> Kunder { get; set; }
+        public DbSet<faqhjelp> Spm { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
