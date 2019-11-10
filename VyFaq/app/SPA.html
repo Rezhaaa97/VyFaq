@@ -14,10 +14,10 @@
         </div>
         <ul class="nav nav-pills nav-justified">
             <li><img src="/app/images/vylogo.png" style="width:70%;" /></li>
-            <li><a (click)="visKundeSide()"><span class="glyphicon glyphicon-home"></span>Hjem</a></li>
-            <li><a (click)="visSporsmal()"><span class="glyphicon glyphicon-eye-open"></span>FAQ</a></li>
-            <li><a (click)="visForside() "><span class="glyphicon glyphicon-earphone"></span>Kontakt oss</a></li>
-            <li><a (click)="visKundeSide()"><span class="glyphicon glyphicon-check"></span>Spørsmål && Svar</a></li>
+            <li><a (click)="visKundeSide()">Hjem</a></li>
+            <li><a (click)="visSporsmal()">FAQ</a></li>
+            <li><a (click)="visForside() ">Kontakt oss</a></li>
+            <li><a (click)="visKundeSide() ">Spørsmål & Svar</a></li>
         </ul>
     </nav>
 </div>
@@ -80,7 +80,7 @@
                         <div class='panel-body'>
                             <div>
                                 <b>Svar:</b> {{spml.svar}} <br>
-                                <b>like</b> {{spml.like}}  <b>unlike</b> {{spml.unlike}}
+                                <b><span class="glyphicon glyphicon-thumbs-up"></span></b> {{spml.like}}  <b><span class="glyphicon glyphicon-thumbs-down"></span></b> {{spml.unlike}}
                             </div>
                         </div>
                     </div>
