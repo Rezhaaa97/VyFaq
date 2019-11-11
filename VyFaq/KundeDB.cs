@@ -86,6 +86,29 @@ namespace VyFaq
             }
         }
 
+        public bool oppdaterLikeUnlike(int id, faqhjelp faq)
+        {
+            faqhjelp funnetFaq = db.Spm.FirstOrDefault(f => f.id == id);
+            if(funnetFaq == null)
+            {
+                return false;
+            }
+
+            funnetFaq.like = faq.like;
+            funnetFaq.unlike = faq.unlike;
+
+            try
+            {
+                db.SaveChanges();
+
+            }
+            catch(Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public List<faqhjelp> AlleSpmOgSvar()
         {
             var db = new FaqContext();

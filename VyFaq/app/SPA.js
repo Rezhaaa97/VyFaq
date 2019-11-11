@@ -15,6 +15,7 @@ var forms_1 = require("@angular/forms");
 require("rxjs/add/operator/map");
 var Kunde_1 = require("./Kunde");
 var http_2 = require("@angular/http");
+var Faqhjelp_1 = require("./Faqhjelp");
 var SPA = /** @class */ (function () {
     function SPA(_http, fb) {
         this._http = _http;
@@ -71,6 +72,43 @@ var SPA = /** @class */ (function () {
         }, function (error) { return alert(error); }, function () { return console.log("ferdig get-api/kunde"); });
     };
     ;
+    SPA.prototype.tommelned = function (spml) {
+        var _this = this;
+        console.log("id er :", spml.id);
+        var like = new Faqhjelp_1.Faqhjelp();
+        like.spml = spml.spml;
+        like.svar = spml.svar;
+        like.unlike = spml.unlike + 1;
+        like.like = spml.like;
+        console.log("Like er : ", like.like);
+        console.log("Objektet er :", like);
+        var body = JSON.stringify(like);
+        var headers = new http_2.Headers({ "Content-Type": "application/json" });
+        this._http.put("api/faqhjelp/" + spml.id, body, { headers: headers })
+            .map(function (returData) { return returData.toString(); })
+            .subscribe(function (retur) {
+            _this.hentAlleSpm();
+        }, function (error) { return alert(error); }, function () { return console.log("ferdig post-api/kunde"); });
+    };
+    SPA.prototype.tommelopp = function (spml) {
+        var _this = this;
+        console.log("Hei tommelopp");
+        console.log("id er :", spml.id);
+        var like = new Faqhjelp_1.Faqhjelp();
+        like.spml = spml.spml;
+        like.svar = spml.svar;
+        like.unlike = spml.unlike;
+        like.like = spml.like + 1;
+        console.log("Like er : ", like.like);
+        console.log("Objektet er :", like);
+        var body = JSON.stringify(like);
+        var headers = new http_2.Headers({ "Content-Type": "application/json" });
+        this._http.put("api/faqhjelp/" + spml.id, body, { headers: headers })
+            .map(function (returData) { return returData.toString(); })
+            .subscribe(function (retur) {
+            _this.hentAlleSpm();
+        }, function (error) { return alert(error); }, function () { return console.log("ferdig post-api/kunde"); });
+    };
     //FAQ
     SPA.prototype.hentAlleSpm = function () {
         var _this = this;
@@ -87,6 +125,7 @@ var SPA = /** @class */ (function () {
                     _this.alleSpml.push(spmlObjekt);
                     _this.laster = false;
                 }
+                console.log(JsonData);
             }
             ;
         }, function (error) { return alert(error); }, function () { return console.log("ferdig get-api/Faqhjelp"); });

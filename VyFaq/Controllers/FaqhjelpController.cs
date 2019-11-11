@@ -54,5 +54,23 @@ namespace VyFaq.Controllers
                 + ", Svar: " + innSpm.svar)
             };
         }
+
+        public HttpResponseMessage Put(int id, [FromBody]faqhjelp faq)
+        {
+            bool OK = kundeDb.oppdaterLikeUnlike(id, faq);
+            if (OK)
+            {
+                return new HttpResponseMessage()
+                {
+                    StatusCode = HttpStatusCode.OK
+                };
+            }
+            return new HttpResponseMessage()
+            {
+                StatusCode = HttpStatusCode.NotFound,
+                Content = new StringContent("Kunne ikke endre like/unlike i DB")
+            };
+            
+        }
     }
 }

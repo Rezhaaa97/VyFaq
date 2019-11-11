@@ -78,6 +78,54 @@ export class SPA {
                 () => console.log("ferdig get-api/kunde")
             );
     };
+    tommelned(spml: Faqhjelp) {
+        console.log("id er :", spml.id);
+        var like = new Faqhjelp();
+        like.spml = spml.spml;
+        like.svar = spml.svar;
+        like.unlike = spml.unlike + 1;
+        like.like = spml.like;
+        console.log("Like er : ", like.like);
+        console.log("Objektet er :", like);
+        var body: string = JSON.stringify(like);
+        var headers = new Headers({ "Content-Type": "application/json" });
+
+        this._http.put("api/faqhjelp/" + spml.id, body, { headers: headers })
+            .map(returData => returData.toString())
+            .subscribe(
+                retur => {
+                    this.hentAlleSpm();
+
+                },
+                error => alert(error),
+                () => console.log("ferdig post-api/kunde")
+            );
+    }
+    tommelopp(spml: Faqhjelp) {
+        console.log("Hei tommelopp");
+        console.log("id er :", spml.id);
+        var like = new Faqhjelp();
+        like.spml = spml.spml;
+        like.svar = spml.svar;
+        like.unlike = spml.unlike;
+        like.like = spml.like + 1;
+        console.log("Like er : ", like.like);
+        console.log("Objektet er :", like);
+        var body: string = JSON.stringify(like);
+        var headers = new Headers({ "Content-Type": "application/json" });
+
+        this._http.put("api/faqhjelp/" + spml.id, body, { headers: headers })
+            .map(returData => returData.toString())
+            .subscribe(
+                retur => {
+                    this.hentAlleSpm();
+                   
+                },
+                error => alert(error),
+                () => console.log("ferdig post-api/kunde")
+            );
+
+    }
 
     //FAQ
 
@@ -95,7 +143,9 @@ export class SPA {
                             this.alleSpml.push(spmlObjekt);
                             this.laster = false;
                         }
+                        console.log(JsonData);
                     };
+                    
                 },
                 error => alert(error),
                 () => console.log("ferdig get-api/Faqhjelp")
