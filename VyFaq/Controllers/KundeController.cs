@@ -17,9 +17,6 @@ namespace VyFaq
     {
         KundeDB kundeDb = new KundeDB();
 
-
-        // GET api/Kunde
-
         public HttpResponseMessage Get()
         {
             List<kunde> alleKunder = kundeDb.alleSpm();
@@ -36,7 +33,7 @@ namespace VyFaq
 
         }
 
-        // POST api/Kunde
+       
         [HttpPost]
         public HttpResponseMessage Post([FromBody]kunde innKunde)
         {

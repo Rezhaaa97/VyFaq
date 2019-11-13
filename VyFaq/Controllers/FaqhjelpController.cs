@@ -15,7 +15,6 @@ namespace VyFaq.Controllers
 
         KundeDB kundeDb = new KundeDB();
 
-        // GET api/Kunde
 
         public HttpResponseMessage Get()
         {
@@ -31,7 +30,6 @@ namespace VyFaq.Controllers
             };
         }
 
-        // POST api/Kunde
         [HttpPost]
         public HttpResponseMessage Post([FromBody]faqhjelp innSpm)
         {
